@@ -27,7 +27,7 @@ const {
 
 //post.js routes
 app.get('/feedback', getAllFeedback);
-app.post('/feedback', FBAuth, createFeedback);
+app.post('/feedback', createFeedback);
 app.get('/feedback/:feedbackId', getFeedback);
 app.delete('/feedback/:feedbackId', FBAuth, deleteFeedback);
 
