@@ -1,26 +1,23 @@
 const { db } = require('../util/admin');
 
-//get all posts method
+//get all feedback method
 exports.getAllFeedback = (request,response) => {
-	//db query to get all posts
+	//db query to get all feedback
     db.collection('feedback')
 	.orderBy('createdAt', 'desc')
 	.get()
 	.then(data => {
-		let posts = [];
+		let feedback = [];
 		//for each post, push fields into array
 		data.forEach((doc) => {
-			posts.push({
+			feedback.push({
 				postId: doc.id,
 				body: doc.data().body,
-				createdAt: doc.data().createdAt,
-				commentCount: doc.data().commentCount,
-				likeCount: doc.data().likeCount,
-				userImage: doc.data().userImage
+				createdAt: doc.data().createdAt
 			});
 		});
 		//returns post array
-		return response.json(posts);
+		return response.json(feedback);
 	})
 	.catch((err) => {
 		console.error(err);
@@ -28,30 +25,26 @@ exports.getAllFeedback = (request,response) => {
 	});
 }
 
-//create post method
+//create feedback method
 exports.createFeedback = (request,response) => {
     //validate body
     if(request.body.body.trim() === ''){
         return response.status(400).json({ body: 'must not be empty'});
     }
 
-    //db fields to create post
-    const newPost = {
+    //db fields to create feedback
+    const newFeedback = {
         body: request.body.body,
-        userHandle: request.user.handle,
-        userImage: request.user.imageUrl,
-        createdAt: new Date().toISOString(),
-        likeCount: 0,
-        commentCount: 0
+        createdAt: new Date().toISOString()
     };
 
     //take json to add to db
-    db.collection('posts')
-	.add(newPost)
+    db.collection('feedback')
+	.add(newFeedback)
 	.then(doc => {
-		const postResponse = newPost;
-		postResponse.postId = doc.id;
-		response.json(postResponse);
+		const feedbackResponse = newFeedback;
+		feedbackResponse.feedbackId = doc.id;
+		response.json(feedbackResponse);
 	})
 	.catch(err => {
 		response.status(500).json({ error: 'something went wrong'});

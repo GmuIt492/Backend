@@ -28,9 +28,6 @@ exports.signup = (request, response) => {
     if (!valid) {
         return response.status(400).json(errors);
     }
-	
-	//default signup profile image
-    const noImg = 'no-img.png';
 
     let token,userId; //initialize token and userId object
     //take json to add to db after authenticating data
@@ -55,7 +52,6 @@ exports.signup = (request, response) => {
 			handle: newUser.handle,
 			email: newUser.email,
 			createdAt: new Date().toISOString(),
-			imageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
 			userId
 		};
 		return db.doc(`/users/${newUser.handle}`).set(userCredentials);
