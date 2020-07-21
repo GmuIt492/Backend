@@ -9,8 +9,7 @@ firebase.initializeApp(config);
 //bring validation services
 const {
 	validateSignupData,
-	validateLoginData,
-	reduceUserDetails 
+	validateLoginData
  } = require('../util/validate');
 
 //signup method
@@ -103,106 +102,4 @@ exports.login = (request,response) => {
 			return response.status(500).json({ general: 'wrong credentials, please try again' });
 		}
 	});
-}
-
-//TODO add more variables for profile??
-//add to profile method
-exports.addUserDetails = (request, response) => {
-    let userDetails = reduceUserDetails(request.body);
-
-    //take json to add to db after authenticating data
-    db.doc(`/users/${request.user.handle}`).update(userDetails)
-	.then(() => {
-		return response.json({ message: 'details added successfully'});
-	})
-	.catch((err) => {
-		console.error(err);
-		return response.status(500).json({ error: err.code });
-	})
-}
-
-//upload profile image method
-exports.uploadImage = (request, response) => {
-    //npm install --save busboy
-    const BusBoy = require('busboy');
-    const path = require('path');
-    const os = require('os');
-    const fs = require('fs');
-
-    //store authorization token
-    const busboy = new BusBoy({ headers: request.headers });
-
-    let imageFileName;
-    let imageToBeUploaded = {};
-    
-	//format image
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        if(mimetype !== 'image/jpeg' && mimetype !== 'image/png'){
-            return response.status(400).json({ error: 'wrong file type submitted'});
-        }
-        //get .png from my.image.png
-        const imageExtension = filename.split('.')[filename.split('.').length-1];
-        //1232131.png
-        imageFileName = `${Math.round(Math.random()*100000000)}.${imageExtension}`;
-        //concat filepath
-        const filepath = path.join(os.tmpdir(), imageFileName);
-        imageToBeUploaded = { filepath, mimetype };
-        //create file
-        file.pipe(fs.createWriteStream(filepath));
-    });
-    //execute
-    busboy.on('finish', () => {
-        //upload file
-        admin.storage().bucket().upload(imageToBeUploaded.filepath, {
-            resumable: false,
-            metadata: {
-                metadata: {
-                    contentType: imageToBeUploaded.mimetype
-                }
-            }
-        })
-        //construct image url
-        .then(() => {
-            //alt media to show on browser rather than download
-            const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imageFileName}?alt=media`;
-            //store url into user db
-            //request.user can be used: already authenticate passed FBAuth
-            return db.doc(`/users/${request.user.handle}`).update({ imageUrl });
-        })
-        //return success status
-        .then(() => {
-            return response.json({ message: "image uploaded successfully"});
-        })
-        .catch((err) => {
-            console.error(err);
-            return response.status(500).json({ error: err.code })
-        });
-    });
-    busboy.end(request.rawBody);
-}
-
-//get user details method
-exports.getAuthenticatedUser = (request,response) => {
-    let userData = {};
-
-    //get user details from db
-    db.doc(`/users/${request.user.handle}`).get()
-	.then((doc) => {
-		if(doc.exists){
-			userData.credentials = doc.data();
-			return db.collection('likes').where('userHandle', '==', request.user.handle).get();
-		}
-	})
-	//get number of likes
-	.then((data) => {
-		userData.likes = [];
-		data.forEach((doc) => {
-			userData.likes.push(doc.data());
-		})
-		return response.json(userData);
-	})
-	.catch(err => {
-		console.error(err);
-		return response.status(500).json({ error: err.code })
-	})
 }
