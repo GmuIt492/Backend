@@ -22,7 +22,8 @@ const {
  } = require('./handlers/feedback');
 const {
     signup,
-    login
+    login,
+    getAuthenticatedUser
  } = require('./handlers/users');
 
 //post.js routes
@@ -34,6 +35,7 @@ app.delete('/feedback/:feedbackId', FBAuth, deleteFeedback);
 //users.js routes
 app.post('/signup', signup);
 app.post('/login', login);
+app.get('/user', FBAuth, getAuthenticatedUser);
 
 //add /api extention to api links for convention
 exports.api = functions.https.onRequest(app);

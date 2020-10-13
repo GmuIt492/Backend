@@ -103,3 +103,21 @@ exports.login = (request,response) => {
 		}
 	});
 }
+
+//get user details method
+exports.getAuthenticatedUser = (request,response) => {
+    let userData = {};
+
+    //get user details from db
+    db.doc(`/users/${request.user.handle}`).get()
+	.then((doc) => {
+		if(doc.exists){
+            userData.credentials = doc.data();
+            return response.json(userData);
+		}
+	})
+	.catch(err => {
+		console.error(err);
+		return response.status(500).json({ error: err.code })
+	})
+}
