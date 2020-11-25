@@ -22,7 +22,9 @@ const {
 const { 
     getHeader,
     createHeader,
-    deleteHeader
+    deleteHeader,
+    getHour,
+    createHour
  } = require('./handlers/edit');
 const {
     signup,
@@ -39,6 +41,8 @@ app.delete('/feedback/:feedbackId', FBAuth, deleteFeedback);
 app.get('/header', getHeader);
 app.post('/header', FBAuth, createHeader);
 app.delete('/header', FBAuth, deleteHeader);
+app.get('/hour', getHour);
+app.post('/hour', FBAuth, createHour);
 
 //users.js routes
 app.post('/signup', signup);
