@@ -27,7 +27,7 @@ const {
  } = require('./handlers/users');
 
 //post.js routes
-app.get('/feedback', getAllFeedback);
+app.get('/feedback', FBAuth, getAllFeedback);
 app.post('/feedback', createFeedback);
 app.get('/feedback/:feedbackId', getFeedback);
 app.delete('/feedback/:feedbackId', FBAuth, deleteFeedback);

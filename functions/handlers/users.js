@@ -96,10 +96,10 @@ exports.login = (request,response) => {
 		//auth/wrong-password
 		//auth/user-not-found 
 		if(err.code === 'auth/wrong-password') {
-			return response.status(403).json({ general: 'wrong credentials, please try again' });
+			return response.status(403).json({ general: 'Error' });
 		}
 		else {
-			return response.status(500).json({ general: 'wrong credentials, please try again' });
+			return response.status(500).json({ general: 'Error' });
 		}
 	});
 }
