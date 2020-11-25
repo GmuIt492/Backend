@@ -34,7 +34,7 @@ exports.signup = (request, response) => {
 	//check if user exist: create user
 	.then((doc) => {
 		if(doc.exists){
-			return response.status(400).json({ handle: 'this handle is already taken'});
+			return response.status(400).json({ handle: 'This handle is already taken'});
 		} else {
 			return firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
 		}
@@ -61,9 +61,9 @@ exports.signup = (request, response) => {
 	.catch((err) => {
 		console.error(err);
 		if(err.code === 'auth/email-already-in-use'){
-			return response.status(400).json({ email: 'email is already in use'});
+			return response.status(400).json({ email: 'Email is already in use'});
 		} else {
-			return response.status(500).json({ general: 'something went wrong, please try again'});
+			return response.status(500).json({ general: 'Something went wrong, please try again'});
 		}
 	});
 }

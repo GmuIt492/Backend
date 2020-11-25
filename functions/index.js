@@ -17,20 +17,28 @@ app.use(cors());
 const { 
     getAllFeedback,
     createFeedback,
-    getFeedback,
     deleteFeedback
  } = require('./handlers/feedback');
+const { 
+    getHeader,
+    createHeader,
+    deleteHeader
+ } = require('./handlers/edit');
 const {
     signup,
     login,
     getAuthenticatedUser
  } = require('./handlers/users');
 
-//post.js routes
+//feedback.js routes
 app.get('/feedback', FBAuth, getAllFeedback);
 app.post('/feedback', createFeedback);
-app.get('/feedback/:feedbackId', getFeedback);
 app.delete('/feedback/:feedbackId', FBAuth, deleteFeedback);
+
+//edit.js routes
+app.get('/header', getHeader);
+app.post('/header', FBAuth, createHeader);
+app.delete('/header', FBAuth, deleteHeader);
 
 //users.js routes
 app.post('/signup', signup);
