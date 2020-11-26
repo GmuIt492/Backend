@@ -1,7 +1,7 @@
 const { db } = require('../util/admin');
 
 //get header method
-exports.getHeader = (response) => {
+exports.getHeader = (request,response) => {
 	//db query to get header
     db.collection('header')
 	.orderBy('createdAt', 'desc')
@@ -53,7 +53,7 @@ exports.createHeader = (request,response) => {
 }
 
 //delete header method
-exports.deleteHeader = (response) => {
+exports.deleteHeader = (request,response) => {
     //db query to get header
     db.collection('header')
     .get()

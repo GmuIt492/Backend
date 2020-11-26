@@ -1,7 +1,7 @@
 const { db } = require('../util/admin');
 
 //get all feedback method
-exports.getAllFeedback = (response) => {
+exports.getAllFeedback = (request,response) => {
 	//db query to get all feedback
     db.collection('feedback')
 	.orderBy('createdAt', 'desc')
