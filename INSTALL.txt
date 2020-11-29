@@ -1,2 +1,6 @@
 NO NEED TO RUN BELOW
-npm install --save nodemailer dotenv
+npm install --save express
+npm install --save cors
+npm install --save firebase
+npm install --save nodemailer
+npm install --save dotenv

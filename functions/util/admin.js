@@ -1,4 +1,3 @@
-//npm install --save firebase
 const admin = require('firebase-admin');
 admin.initializeApp();
 

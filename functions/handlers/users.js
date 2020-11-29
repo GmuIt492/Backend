@@ -157,8 +157,6 @@ exports.loginVerification = (request,response) => {
 		if(doc.exists){
             userData = doc.data();
             const result = {'token':''};
-            console.log(userData);
-            console.log(user);
             if (userData.code == user.code) {
                 result.token = userData.token;
             }

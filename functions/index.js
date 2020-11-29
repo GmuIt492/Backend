@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 
 //bring express node js
-//npm install --save express
 const app = require('express')();
 
 //bring FBAuth middleware to protect routes
@@ -9,7 +8,6 @@ const FBAuth = require('./util/fbAuth');
 
 // const { db } = require('./util/admin');
 
-//npm install --save cors
 const cors = require('cors');
 app.use(cors());
 
