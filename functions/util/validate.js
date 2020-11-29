@@ -80,3 +80,18 @@ exports.validateLoginData = (user) => {
         valid: Object.keys(errors).length === 0 ? true : false
     }
 }
+
+//validate verify login data
+exports.validateVerifyData = (user) => {
+    let errors = {}; //initialize error object
+
+    //validate password login
+    if(isEmpty(user.code)) {
+        errors.verify = 'must not be empty';
+    }
+
+    return {
+        errors,
+        valid: Object.keys(errors).length === 0 ? true : false
+    }
+}

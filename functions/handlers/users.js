@@ -23,7 +23,8 @@ let transporter = nodemailer.createTransport({
 //bring validation services
 const {
 	validateSignupData,
-	validateLoginData
+    validateLoginData,
+    validateVerifyData
  } = require('../util/validate');
 
 //signup method
@@ -152,6 +153,12 @@ exports.loginVerification = (request,response) => {
         code: request.body.code
     }
 
+    //validate user object
+    const { valid,errors } = validateVerifyData(user);
+    if (!valid) {
+        return response.status(400).json(errors);
+    }
+
     db.doc(`/users/${user.email}`).get()
 	.then((doc) => {
 		if(doc.exists){
@@ -160,7 +167,12 @@ exports.loginVerification = (request,response) => {
             if (userData.code == user.code) {
                 result.token = userData.token;
             }
-            return response.json(result);
+            if(result.token === '') {
+                return response.status(403).json({ validCode: 'Error' });
+            }
+            else {
+                return response.json(result);
+            }
 		}
 	})
 	.catch(err => {
