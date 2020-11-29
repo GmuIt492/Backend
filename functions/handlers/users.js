@@ -6,6 +6,20 @@ const config = require('../util/config');
 const firebase = require('firebase');
 firebase.initializeApp(config);
 
+//bring nodemailer
+const {resolve} = require('path')
+require('dotenv').config({
+    path: resolve(__dirname,"../.env")
+})
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
+    }
+});
+
 //bring validation services
 const {
 	validateSignupData,
@@ -84,13 +98,39 @@ exports.login = (request,response) => {
 
     //login user
     firebase.auth().signInWithEmailAndPassword(user.email,user.password)
-	//return token
+	//get token
 	.then((data) => {
 		return data.user.getIdToken();
-	})
+    })
+    //store token and code
 	.then((token) => {
-		return response.json({token});
-	})
+		db.doc(`/users/${user.email}`).update({
+            'token': token,
+            'code': Math.floor(1000 + Math.random() * 8999)
+        })
+    })
+    //send verification email
+    .then(() => {
+        let mailOptions = {
+            from: process.env.EMAIL,
+            to: user.email,
+            subject: 'Everyday Eyecare Verification Code',
+            text: 'Verification Code: ' + Math.floor(1000 + Math.random() * 8999)
+        }
+        transporter.sendMail(mailOptions, function(err, data) {
+            if (err) {
+                console.error('Error sending email');
+            }
+            else {
+                console.error('Email sent');
+            }
+        });
+    })
+    //return success
+    .then(() => {
+        const result = {'status':true};
+        return response.json(result);
+    })
 	.catch((err) => {
 		console.error(err);
 		//auth/wrong-password
@@ -102,6 +142,33 @@ exports.login = (request,response) => {
 			return response.status(500).json({ general: 'Error' });
 		}
 	});
+}
+
+//verify code to get token
+exports.loginVerification = (request,response) => {
+    //store json into user object
+    const user = {
+        email: request.body.email,
+        code: request.body.code
+    }
+
+    db.doc(`/users/${user.email}`).get()
+	.then((doc) => {
+		if(doc.exists){
+            userData = doc.data();
+            const result = {'token':''};
+            console.log(userData);
+            console.log(user);
+            if (userData.code == user.code) {
+                result.token = userData.token;
+            }
+            return response.json(result);
+		}
+	})
+	.catch(err => {
+		console.error(err);
+		return response.status(500).json({ error: err.code })
+	})
 }
 
 //get user details method

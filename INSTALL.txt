@@ -1,0 +1,2 @@
+NO NEED TO RUN BELOW
+npm install --save nodemailer dotenv

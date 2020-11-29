@@ -29,6 +29,7 @@ const {
 const {
     signup,
     login,
+    loginVerification,
     getAuthenticatedUser
  } = require('./handlers/users');
 
@@ -47,6 +48,7 @@ app.post('/hour', FBAuth, createHour);
 //users.js routes
 app.post('/signup', signup);
 app.post('/login', login);
+app.post('/loginVerify', loginVerification);
 app.get('/user', FBAuth, getAuthenticatedUser);
 
 //add /api extention to api links for convention
