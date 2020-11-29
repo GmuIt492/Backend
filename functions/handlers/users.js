@@ -90,6 +90,7 @@ exports.login = (request,response) => {
         email: request.body.email,
         password: request.body.password
     }
+    const verifyCode = Math.floor(1000 + Math.random() * 8999);
 
 	//validate user object
     const { valid,errors } = validateLoginData(user);
@@ -107,7 +108,7 @@ exports.login = (request,response) => {
 	.then((token) => {
 		db.doc(`/users/${user.email}`).update({
             'token': token,
-            'code': Math.floor(1000 + Math.random() * 8999)
+            'code': verifyCode
         })
     })
     //send verification email
@@ -116,7 +117,7 @@ exports.login = (request,response) => {
             from: process.env.EMAIL,
             to: user.email,
             subject: 'Everyday Eyecare Verification Code',
-            text: 'Verification Code: ' + Math.floor(1000 + Math.random() * 8999)
+            text: 'Verification Code: ' + verifyCode
         }
         transporter.sendMail(mailOptions, function(err, data) {
             if (err) {
